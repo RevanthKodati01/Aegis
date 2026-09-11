@@ -1,0 +1,14 @@
+name: 'aegis'
+version: '1.0.0'
+config-version: 2
+
+profile: 'aegis'
+
+model-paths: ["models"]
+
+models:
+  aegis:
+    staging:
+      +materialized: view
+    marts:
+      +materialized: table

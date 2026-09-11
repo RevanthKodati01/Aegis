@@ -1,0 +1,11 @@
+version: 2
+
+sources:
+  - name: raw
+    description: "Bronze layer - raw ingested data"
+    schema: main
+    tables:
+      - name: raw_events
+      - name: raw_users
+      - name: raw_subscriptions
+      

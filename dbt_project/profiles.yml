@@ -1,0 +1,7 @@
+aegis:
+  target: dev
+  outputs:
+    dev:
+      type: duckdb
+      path: ../aegis.duckdb
+      threads: 4
