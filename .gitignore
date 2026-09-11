@@ -17,3 +17,8 @@ aegis.duckdb
 # OS / editor junk
 .DS_Store
 .vscode/
+# dbt
+dbt_project/target/
+dbt_project/dbt_packages/
+dbt_project/logs/
+logs/
