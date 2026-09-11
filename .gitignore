@@ -1,0 +1,19 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.Python
+build/
+dist/
+
+# Virtual environment
+.venv/
+venv/
+
+# Aegis - generated database (regenerate by running the scripts)
+aegis.duckdb
+*.duckdb
+
+# OS / editor junk
+.DS_Store
+.vscode/
