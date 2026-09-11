@@ -1,0 +1,52 @@
+version: 2
+
+models:
+  - name: stg_events
+    description: "Cleaned, deduplicated events."
+    columns:
+      - name: event_id
+        description: "Unique identifier for each event."
+        tests:
+          - unique          # no two rows share an event_id (dedup worked)
+          - not_null        # every event has an id
+      - name: user_id
+        tests:
+          - not_null
+      - name: event_type
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['page_view', 'sign_up', 'feature_used', 'checkout_started', 'purchase']
+  - name: dim_users
+    description: "One clean row per user."
+    columns:
+      - name: user_id
+        tests:
+          - unique          # guarantees one row per user (fan-out protection)
+          - not_null
+      - name: country
+        tests:
+          - not_null
+
+  - name: fct_subscriptions
+    description: "Cleaned subscription facts."
+    columns:
+      - name: subscription_id
+        tests:
+          - unique
+          - not_null
+      - name: user_id
+        tests:
+          - not_null
+          - relationships:              # every user_id must exist in dim_users (FK integrity)
+              to: ref('dim_users')
+              field: user_id
+      - name: mrr_amount
+        tests:
+          - not_null        # mrr should never be null (schema-drift protection)
+      - name: status
+        tests:
+          - accepted_values:
+              arguments:
+                values: ['active', 'canceled']
