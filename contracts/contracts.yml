@@ -1,0 +1,57 @@
+# contracts.yml
+# Declarative data contracts. Each entry says WHAT to check on WHICH table.
+# The runner reads this and dispatches to the matching check function.
+
+contracts:
+
+  # ---------------- raw_events ----------------
+  - table: raw_events
+    checks:
+      - type: row_count           # volume: table shouldn't be empty / too small
+        min_rows: 1000
+        severity: high
+      - type: not_null            # every event must have a user_id
+        column: user_id
+        severity: high
+      - type: null_rate           # allow a small % of nulls, no more
+        column: properties
+        max_null_rate: 0.05
+        severity: medium
+      - type: uniqueness          # event_id should be unique
+        column: event_id
+        severity: high
+      - type: freshness           # data shouldn't be stale
+        column: ts
+        max_age_days: 400         # generous; our synthetic data ends mid-2026
+        severity: medium
+
+  # ---------------- raw_users ----------------
+  - table: raw_users
+    checks:
+      - type: row_count
+        min_rows: 100
+        severity: high
+      - type: uniqueness
+        column: user_id
+        severity: critical        # duplicate users cause fan-out joins
+      - type: not_null
+        column: country
+        severity: medium
+      - type: null_rate
+        column: country
+        max_null_rate: 0.02
+        severity: medium
+
+  # ---------------- raw_subscriptions ----------------
+  - table: raw_subscriptions
+    checks:
+      - type: not_null
+        column: mrr_amount        # schema drift nulls this -> revenue breaks
+        severity: critical
+      - type: uniqueness
+        column: subscription_id
+        severity: high
+      - type: accepted_values
+        column: status
+        allowed: ['active', 'canceled']
+        severity: medium
